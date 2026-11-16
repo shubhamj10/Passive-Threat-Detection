@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+/* Design tokens. No web fonts are loaded: the enclave dashboard works fully offline. */
+@theme {
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Arial Narrow", sans-serif;
+
+  --color-canvas: #e6ebef;
+  --color-panel: #ffffff;
+  --color-sunk: #f2f5f7;
+  --color-ink: #16222e;
+  --color-muted: #586977;
+  --color-rule: #cbd4db;
+  --color-signal: #1f6f8b;
+  --color-signal-soft: #d6e8ef;
+
+  --color-sev-critical: #7a1020;
+  --color-sev-high: #b42318;
+  --color-sev-medium: #a85f08;
+  --color-sev-low: #3b6c8c;
+  --color-trust: #5b4a9e;
+  --color-trust-soft: #e7e3f4;
+  --color-ok: #2f7a4b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #0f1a24;
+    --color-panel: #172431;
+    --color-sunk: #1d2c3a;
+    --color-ink: #e3eaf0;
+    --color-muted: #94a6b5;
+    --color-rule: #2c3d4d;
+    --color-signal: #5fb3d1;
+    --color-signal-soft: #1d3a48;
+    --color-sev-critical: #ff8a9a;
+    --color-sev-high: #ff7a6e;
+    --color-sev-medium: #f0b45e;
+    --color-sev-low: #8cc0e0;
+    --color-trust: #b1a3ea;
+    --color-trust-soft: #2b2647;
+    --color-ok: #79c996;
+  }
+}
+
+html { background: var(--color-canvas); color: var(--color-ink); }
+body { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+.font-display { font-family: var(--font-display); font-stretch: semi-condensed; }
+
+:focus-visible { outline: 2px solid var(--color-signal); outline-offset: 2px; border-radius: 3px; }
+
+/* The one moving thing on the page: traffic only ever travels one way. */
+@keyframes flow-right { from { background-position: 0 0; } to { background-position: 28px 0; } }
+.diode-line {
+  background-image: repeating-linear-gradient(90deg, var(--color-signal) 0 10px, transparent 10px 14px, var(--color-signal) 14px 16px, transparent 16px 28px);
+  animation: flow-right 0.9s linear infinite;
+}
+.diode-line.idle { animation: none; opacity: 0.35; }
+@media (prefers-reduced-motion: reduce) { .diode-line { animation: none; } }

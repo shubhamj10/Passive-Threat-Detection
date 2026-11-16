@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+backend/.env
+# Data and generated artefacts (never commit)
+backend/data/raw/*
+backend/data/synthetic/*
+backend/data/processed/*
+!backend/data/**/.gitkeep
+backend/data/*.db
+backend/data/*.db-*
+backend/models/*
+!backend/models/.gitkeep
+backend/reports/*
+!backend/reports/.gitkeep
+# Node
+frontend/node_modules/
+frontend/dist/
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

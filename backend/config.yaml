@@ -1,0 +1,71 @@
+# Passive AI Threat Detection - runtime configuration.
+# Thresholds are STARTING VALUES for the synthetic data. Tune them on your own traffic.
+# Everything under `detection:` is hashed into each alert's trace.config_hash.
+
+network:
+  internal_subnets: ["10.0.0.0/8"]
+
+diode:
+  host: 127.0.0.1
+  port: 47555                 # change if the UDP port is in use
+  max_datagram_bytes: 65000
+  queue_maxsize: 200000       # bounded stream queue (oldest dropped when full)
+
+generator:
+  time_scale: 20.0            # event seconds per wall second during demo/replay
+  records_per_datagram: 150
+  demo_minutes: 30            # length of one demo loop (event time)
+
+throughput:
+  target_flows_per_s: 20000   # a GOAL. Quote only reports/benchmark.json results.
+
+api:
+  ws_stats_interval_s: 1.0
+
+storage:
+  sqlite_path: data/alerts.db
+
+detection:
+  watermark_lateness_s: 2
+  allowlist:
+    # Known periodic or high-volume services that must never raise alerts
+    destinations: ["192.0.2.123"]        # internal NTP relay in the synthetic data
+    domains: []
+  ddos:
+    window_s: 10
+    candidate_min_flows: 5
+    alert_threshold: 0.70
+    min_flows: 300            # min_evidence gate
+    persistence_windows: 2    # consecutive suspicious windows
+    cooldown_s: 120
+    reflection_ports: [19, 53, 123, 389, 1900, 11211]
+  beacon:
+    window_s: 600             # sliding look-back
+    hop_s: 60
+    min_events: 8             # candidate + min_evidence gate
+    min_span_s: 240           # persistence gate
+    alert_threshold: 0.70
+    cooldown_s: 1800
+  dns:
+    window_s: 60
+    alert_threshold: 0.70
+    dga_min_domains: 3        # suspicious names from one host in one window
+    tunnel_min_queries: 10
+    tunnel_min_label_len: 24
+    cooldown_s: 600
+  severity:
+    high: 0.90
+    medium: 0.80
+
+assurance:
+  check_interval_s: 60          # how often the assurance monitor runs (event time)
+  drift_psi_warn: 0.2           # feature drift (PSI) above this lowers the trust score
+  drift_min_samples: 150
+  drift_window_s: 900           # live features compared over the last 15 min (event time)
+  volume_window_s: 1800
+  volume_min_elapsed_s: 300
+  alert_volume_band: [0.2, 5.0] # alert count outside 0.2x to 5x the baseline is suspicious
+  min_feedback: 20              # analyst labels needed before the live FP rate is used
+  trust_weights: {drift: 0.4, volume: 0.2, feedback_fp: 0.4}
+  trust_alert_below: 70         # raise an assurance alert under this score
+  trust_recover_above: 75       # close the assurance alert above this score

@@ -1,0 +1,4 @@
+# Optional extras. Each is a guarded import: the project runs without them.
+shap>=0.44        # per-alert SHAP evidence (fallback: importance x deviation)
+scapy>=2.5        # offline PCAP reading (app/enclave/ingest/pcap_reader.py)
+openai>=1.30      # Azure OpenAI explainer (fallback: offline template)
